@@ -1,11 +1,18 @@
 import React, { Component } from "react";
 import { ProductTable } from "./ProductTable";
+import { Pagination } from "./Pagination";
 import * as Papa from "papaparse/papaparse.min.js";
 
 export class PapaParse extends Component {
   state = {
     fileContainer: null,
-    products: []
+    products: [],
+    totalProducts: [],
+    paginationObj: {
+      itemsPerPage: 100,
+      currentPageNumber: 0,
+      numberOfPages: 0
+    }
   };
 
   handleChange = event => {
@@ -22,7 +29,6 @@ export class PapaParse extends Component {
   };
 
   parseFile = () => {
-
     // https://www.papaparse.com/docs
     // https://www.papaparse.com/docs#config --> config object;
 
@@ -30,20 +36,60 @@ export class PapaParse extends Component {
       header: true,
       download: true,
       skipEmptyLines: true,
-      
 
       complete: this.handleParsedFile
     });
-
-    this.setState(() => ({ fileContainer: null }));
   };
 
-  handleParsedFile = ({data}) => {
+  handleParsedFile = ({ data }) => {
+    let products = data.slice(0, 100);
+    // this.setState(() => ({ products: products, totalProducts: data }));
 
-    let products = data.slice(0, 10)
+    this.setState(prevState => ({
+      fileContainer: null,
+      products: products,
+      totalProducts: data,
+      paginationObj: {
+        ...prevState.paginationObj,
+        numberOfPages: Math.ceil(
+          data.length / prevState.paginationObj.itemsPerPage
+        )
+      }
+    }));
+  };
 
-    this.setState(() => ({ products }));
+  changePage = pageNumber => {
+    let noOfItemsToSkip = pageNumber * 100;
 
+    this.setState(prevState => ({
+      products: this.state.totalProducts.slice(
+        noOfItemsToSkip,
+        noOfItemsToSkip + 100
+      ),
+      paginationObj: {
+        ...prevState.paginationObj,
+        currentPageNumber: pageNumber
+      }
+    }));
+  };
+
+  goToPrevPage = () => {
+    let { currentPageNumber: pageNo } = this.state.paginationObj;
+
+    if (pageNo > 0) {
+      this.changePage(--pageNo);
+    }
+  };
+
+  goToNextPage = () => {
+    let {
+      currentPageNumber: pageNo,
+      numberOfPages: totalPage
+    } = this.state.paginationObj;
+
+    if (pageNo < (totalPage - 1)) {
+      this.changePage(++pageNo);
+    }
   };
 
   render() {
@@ -80,7 +126,18 @@ export class PapaParse extends Component {
         {!this.state.products.length ? (
           <h2 className="text-center m-4">No Data!</h2>
         ) : (
-          <ProductTable products={this.state.products} />
+          <>
+            <Pagination
+              totalCount={this.state.totalProducts.length}
+              itemsPerPage={this.state.paginationObj.itemsPerPage}
+              currentPageNumber={this.state.paginationObj.currentPageNumber}
+              changePage={this.changePage}
+              numberOfPages={this.state.paginationObj.numberOfPages}
+              next={this.goToNextPage}
+              previous={this.goToPrevPage}
+            />
+            <ProductTable products={this.state.products} />
+          </>
         )}
       </div>
     );
