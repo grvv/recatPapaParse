@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import { ProductTable } from "./ProductTable";
 import { Pagination } from "./Pagination";
+import { ProductTable } from "./ProductTable";
+import { Dropdown } from "react-bootstrap";
 import * as Papa from "papaparse/papaparse.min.js";
 
 export class PapaParse extends Component {
@@ -58,13 +59,15 @@ export class PapaParse extends Component {
     }));
   };
 
-  changePage = pageNumber => {
-    let noOfItemsToSkip = pageNumber * 100;
+  changePage = (pageNumber, itemsPerPage) => {
+    let noOfItemsToSkip = pageNumber * itemsPerPage;
+
+    console.log(pageNumber, itemsPerPage);
 
     this.setState(prevState => ({
       products: this.state.totalProducts.slice(
         noOfItemsToSkip,
-        noOfItemsToSkip + 100
+        noOfItemsToSkip + itemsPerPage
       ),
       paginationObj: {
         ...prevState.paginationObj,
@@ -87,9 +90,24 @@ export class PapaParse extends Component {
       numberOfPages: totalPage
     } = this.state.paginationObj;
 
-    if (pageNo < (totalPage - 1)) {
+    if (pageNo < totalPage - 1) {
       this.changePage(++pageNo);
     }
+  };
+
+  changeItemsPerPage = count => {
+    this.setState(prevState => ({
+      products: this.state.totalProducts.slice(
+        0,
+        count
+      ),
+      paginationObj: {
+        ...prevState.paginationObj,
+        itemsPerPage: count,
+        currentPageNumber: 0,
+        numberOfPages: Math.ceil(prevState.totalProducts.length / count)
+      }
+    }));
   };
 
   render() {
@@ -127,6 +145,32 @@ export class PapaParse extends Component {
           <h2 className="text-center m-4">No Data!</h2>
         ) : (
           <>
+            <div className="text-center mt-3">
+              <Dropdown>
+                <Dropdown.Toggle variant="warning" id="dropdown-basic">
+                  Items Per page - {this.state.paginationObj.itemsPerPage}
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu>
+                  <Dropdown.Item onClick={() => this.changeItemsPerPage(100)}>
+                    100
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={() => this.changeItemsPerPage(200)}>
+                    200
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={() => this.changeItemsPerPage(300)}>
+                    300
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={() => this.changeItemsPerPage(400)}>
+                    400
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={() => this.changeItemsPerPage(500)}>
+                    500
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>
+
             <Pagination
               totalCount={this.state.totalProducts.length}
               itemsPerPage={this.state.paginationObj.itemsPerPage}
@@ -136,7 +180,12 @@ export class PapaParse extends Component {
               next={this.goToNextPage}
               previous={this.goToPrevPage}
             />
-            <ProductTable products={this.state.products} />
+            <ProductTable
+              products={this.state.products}
+              totalCount={this.state.totalProducts.length}
+              currentPageNumber={this.state.paginationObj.currentPageNumber}
+              itemsPerPage={this.state.paginationObj.itemsPerPage}
+            />
           </>
         )}
       </div>

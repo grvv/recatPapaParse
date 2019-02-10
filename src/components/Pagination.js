@@ -18,12 +18,10 @@ export class Pagination extends Component {
   }
 
   handlePageChange = navigateTo => {
-    this.props.changePage(navigateTo);
+    this.props.changePage(navigateTo, this.props.itemsPerPage);
   };
 
   render() {
-    console.log(this.props);
-
     return (
       <nav aria-label="Page navigation example">
         <ul className="pagination justify-content-center mt-3">
