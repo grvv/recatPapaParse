@@ -18,7 +18,7 @@ export class Pagination extends Component {
   }
 
   handlePageChange = navigateTo => {
-    this.props.changePage(navigateTo, this.props.itemsPerPage);
+    this.props.changePage(navigateTo);
   };
 
   render() {

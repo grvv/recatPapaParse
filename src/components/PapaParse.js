@@ -59,15 +59,15 @@ export class PapaParse extends Component {
     }));
   };
 
-  changePage = (pageNumber, itemsPerPage) => {
-    let noOfItemsToSkip = pageNumber * itemsPerPage;
+  changePage = (pageNumber) => {
+    let noOfItemsToSkip = pageNumber * this.state.paginationObj.itemsPerPage;
 
-    console.log(pageNumber, itemsPerPage);
+    console.log(pageNumber, this.state.paginationObj.itemsPerPage);
 
     this.setState(prevState => ({
       products: this.state.totalProducts.slice(
         noOfItemsToSkip,
-        noOfItemsToSkip + itemsPerPage
+        noOfItemsToSkip + this.state.paginationObj.itemsPerPage
       ),
       paginationObj: {
         ...prevState.paginationObj,
