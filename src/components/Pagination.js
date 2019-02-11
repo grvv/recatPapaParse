@@ -30,6 +30,10 @@ export class Pagination extends Component {
               <span className="sr-only">Previous</span>
             </button>
           </li>
+          {/**
+            * https://stackoverflow.com/questions/3746725/create-a-javascript-array-containing-1-n
+            * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/from
+          */}
           {Array.from(Array(this.props.numberOfPages)).map((item, i) => (
             <li className={this.makePageActive(i)} key={i}>
               <button

@@ -5,7 +5,6 @@ import { Dropdown } from "react-bootstrap";
 import * as Papa from "papaparse/papaparse.min.js";
 
 export class PapaParse extends Component {
-  
   state = {
     fileContainer: null,
     products: [],
@@ -44,9 +43,9 @@ export class PapaParse extends Component {
   };
 
   handleParsedFile = ({ data }) => {
-    let products = data.slice(0, 100);
-    // this.setState(() => ({ products: products, totalProducts: data }));
+    // https://stackoverflow.com/questions/43040721/how-to-update-nested-state-properties-in-react
 
+    let products = data.slice(0, 100);
     this.setState(prevState => ({
       fileContainer: null,
       products: products,
@@ -60,7 +59,7 @@ export class PapaParse extends Component {
     }));
   };
 
-  changePage = (pageNumber) => {
+  changePage = pageNumber => {
     let noOfItemsToSkip = pageNumber * this.state.paginationObj.itemsPerPage;
 
     console.log(pageNumber, this.state.paginationObj.itemsPerPage);
@@ -98,10 +97,7 @@ export class PapaParse extends Component {
 
   changeItemsPerPage = count => {
     this.setState(prevState => ({
-      products: this.state.totalProducts.slice(
-        0,
-        count
-      ),
+      products: this.state.totalProducts.slice(0, count),
       paginationObj: {
         ...prevState.paginationObj,
         itemsPerPage: count,
@@ -146,6 +142,10 @@ export class PapaParse extends Component {
           <h2 className="text-center m-4">No Data!</h2>
         ) : (
           <>
+            {/**
+             * https://reactjs.org/docs/fragments.html
+             */}
+
             <div className="text-center mt-3">
               <Dropdown>
                 <Dropdown.Toggle variant="warning" id="dropdown-basic">
