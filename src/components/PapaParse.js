@@ -5,6 +5,7 @@ import { Dropdown } from "react-bootstrap";
 import * as Papa from "papaparse/papaparse.min.js";
 
 export class PapaParse extends Component {
+  
   state = {
     fileContainer: null,
     products: [],
@@ -172,8 +173,6 @@ export class PapaParse extends Component {
             </div>
 
             <Pagination
-              totalCount={this.state.totalProducts.length}
-              itemsPerPage={this.state.paginationObj.itemsPerPage}
               currentPageNumber={this.state.paginationObj.currentPageNumber}
               changePage={this.changePage}
               numberOfPages={this.state.paginationObj.numberOfPages}

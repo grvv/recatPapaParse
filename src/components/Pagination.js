@@ -1,21 +1,16 @@
+import classNames from "classnames";
 import React, { Component } from "react";
 
 export class Pagination extends Component {
-  state = {
-    totalCount: 0,
-    itemsPerPage: 0,
-    currentPageNumber: 0
+  // For Conditional class rendering
+  // https://github.com/JedWatson/classnames
+  // https://medium.freecodecamp.org/deliberate-practice-what-i-learned-from-reading-classnames-f9b89cb785e4
+
+  makePageActive = pageNumber => {
+    return classNames("page-item", {
+      active: pageNumber == this.props.currentPageNumber
+    });
   };
-
-  //   component lifecycle hooks --> https://reactjs.org/docs/react-component.html
-
-  componentDidMount() {
-    this.setState(() => ({
-      totalCount: this.props.totalCount,
-      itemsPerPage: this.props.itemsPerPage,
-      currentPageNumber: this.props.currentPageNumber
-    }));
-  }
 
   handlePageChange = navigateTo => {
     this.props.changePage(navigateTo);
@@ -36,7 +31,7 @@ export class Pagination extends Component {
             </button>
           </li>
           {Array.from(Array(this.props.numberOfPages)).map((item, i) => (
-            <li className="page-item" key={i}>
+            <li className={this.makePageActive(i)} key={i}>
               <button
                 type="button"
                 className="page-link"
